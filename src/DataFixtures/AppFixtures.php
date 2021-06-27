@@ -16,6 +16,8 @@ class AppFixtures extends Fixture
 
         $species = new Species();
         $species->setName("Mammals");
+        $species->setImage("mammals.jpg");
+        $species->setAbout("Mammals include humans and all other animals that are warm-blooded vertebrates (vertebrates have backbones) with hair. They feed their young with milk and have a more well-developed brain than other types of animals.");
         $manager->persist($species);
 
         $specialist = new Manager();
@@ -55,6 +57,8 @@ class AppFixtures extends Fixture
 
         $species = new Species();
         $species->setName("Birds");
+        $species->setImage("birds.jpg");
+        $species->setAbout("Birds are warm-blooded vertebrates (vertebrates have backbones) and are the only animals with feathers. Although all birds have wings, a few species can't fly.");
         $manager->persist($species);
 
         $specialist = new Manager();
@@ -94,6 +98,8 @@ class AppFixtures extends Fixture
 
         $species = new Species();
         $species->setName("Reptiles");
+        $species->setImage("reptiles.jpg");
+        $species->setAbout("Reptiles are cold-blooded vertebrates. (Vertebrates have backbones.) They have dry skin covered with scales or bony plates and usually lay soft-shelled eggs.");
         $manager->persist($species);
 
         $specialist = new Manager();
@@ -133,6 +139,8 @@ class AppFixtures extends Fixture
 
         $species = new Species();
         $species->setName("Fishes");
+        $species->setImage("fishes.jpg");
+        $species->setAbout("Fish are vertebrates (vertebrates have backbones) that live in water. They breathe using special organs called gills.");
         $manager->persist($species);
 
         $specialist = new Manager();

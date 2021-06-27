@@ -34,6 +34,16 @@ class Species
      */
     private $managers;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $image;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $about;
+
     public function __construct()
     {
         $this->animals = new ArrayCollection();
@@ -113,6 +123,30 @@ class Species
                 $manager->setSpecies(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function getAbout(): ?string
+    {
+        return $this->about;
+    }
+
+    public function setAbout(?string $about): self
+    {
+        $this->about = $about;
 
         return $this;
     }

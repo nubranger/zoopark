@@ -1,20 +1,25 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello SpeciesController!{% endblock %}
+{% block title %}Animal Species{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/Users/power/Documents/GitHub/zoopark/src/Controller/SpeciesController.php'|file_link(0) }}">src/Controller/SpeciesController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/Users/power/Documents/GitHub/zoopark/templates/species/index.html.twig'|file_link(0) }}">templates/species/index.html.twig</a></code></li>
-    </ul>
-</div>
+    <div class="container mt-5">
+        <h1>Animal Species</h1>
+    </div>
+    <div class="container mt-5">
+        <div class="row row-cols-1 row-cols-md-4 g-2">
+            {% for specie in species %}
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="{{ asset('build/images/species/') }}{{ specie.image }}" class="card-img-top p-3"
+                             alt="{{ specie.name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ specie.name }}</h5>
+                            <p class="card-text">{{ specie.about }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
