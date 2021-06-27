@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Animals{% endblock %}
+
+{% block body %}
+    <div class="container mt-2">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for animal in animals %}
+                <div class="col">
+                    <div class="card h-100">
+                        {% if animal.image %}
+                            <img src="{{ asset('build/images/noimage.jpg') }}" alt="noimage" class="card-img-top">
+                        {% else %}
+                            <img src="{{ asset('build/images/noimage.jpg') }}" alt="noimage" class="card-img-top">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ animal.name }}</h5>
+                            <p class="card-text">Birth year: {{ animal.birthYear.format("Y") }}</p>
+                            <p class="card-text">Species: {{ animal.species.name }}</p>
+                            <p class="card-text">Specialist of {{ animal.species.name }}: {{ animal.manager.name }} {{ animal.manager.surname }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% if animals is empty %}
+            <p class="mt-2">There are no animals to show.</p>
+        {% endif %}
+    </div>
+{% endblock %}
