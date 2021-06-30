@@ -21,7 +21,7 @@
                 <a href="{{ path('species_animals', {id:specie.id}) }}" style="text-decoration: none">
                     <div class="col">
                         <div class="card h-100">
-                            <img src="{{ asset('build/images/species/') }}{{ specie.image }}" class="card-img-top p-3"
+                            <img src="{{ asset('build/images/species/' ~ specie.image) }}" class="card-img-top p-3"
                                  alt="{{ specie.name }}">
                             <div class="card-body">
                                 <h5 class="text-dark card-title">{{ specie.name }}</h5>

@@ -20,6 +20,7 @@
 ###< phpunit/phpunit ###
 
 ###> symfony/webpack-encore-bundle ###
+/public/uploads/
 /node_modules/
 /public/build/
 npm-debug.log

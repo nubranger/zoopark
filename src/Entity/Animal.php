@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\AnimalRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=AnimalRepository::class)
@@ -19,6 +20,13 @@ class Animal
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Name should not be blank.")
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 255,
+     *      minMessage = "Name must be at least {{ limit }} characters long.",
+     *      maxMessage = "Name cannot be longer than {{ limit }} characters."
+     * )
      */
     private $name;
 
@@ -122,5 +130,10 @@ class Animal
         $this->image = $image;
 
         return $this;
+    }
+
+    public function getImagePath(): ?string
+    {
+        return '/uploads/animal_images/' . $this->getImage();
     }
 }

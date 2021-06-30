@@ -16,22 +16,34 @@
     </div>
 
     <div class="container mt-5 mb-5">
-        <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="row row-cols-1 row-cols-md-4 g-4">
             {% for animal in animals %}
                 <div class="col">
                     <div class="card h-100">
                         {% if animal.image %}
-                            <img src="{{ asset('build/images/noimage.jpg') }}" alt="noimage" class="card-img-top">
+                            <img src="{{ animal.imagePath }}" alt="{{ animal.image }}" class="card-img-top">
                         {% else %}
                             <img src="{{ asset('build/images/noimage.jpg') }}" alt="noimage" class="card-img-top">
                         {% endif %}
                         <div class="card-body">
-                            <h5 class="card-title">{{ animal.name }}</h5>
+                            <h5 class="card-title">
+                                <a class="text-success" style="text-decoration: none" href="{{ path('animal_view', {id:animal.id}) }}">{{ animal.name }}</a>
+                            </h5>
                             <p class="card-text">Birth year: {{ animal.birthYear.format("Y") }}</p>
-                            <p class="card-text">Species: {{ animal.species.name }}</p>
-                            <p class="card-text">Specialist of {{ animal.species.name }}
-                                : {{ animal.manager.name }} {{ animal.manager.surname }}
+                            <p class="card-text">Species:
+                                <a class="text-success" style="text-decoration: none"
+                                   href="{{ path('species_animals', {id:animal.species.id}) }}">{{ animal.species.name }}</a>
                             </p>
+                            <p class="card-text">
+                                Specialist of {{ animal.species.name }}: <a class="text-success" href="#"
+                                                                            style="text-decoration: none">{{ animal.manager.name }} {{ animal.manager.surname }}</a>
+                            </p>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <a href="{{ path('animal_edit', {id:animal.id}) }}" type="button"
+                               class="btn btn-outline-secondary">Edit</a>
+                            <a href="{{ path('animal_delete', {id:animal.id}) }}" type="button"
+                               class="btn btn-outline-danger">Delete</a>
                         </div>
                     </div>
                 </div>
@@ -41,4 +53,6 @@
             <p class="mt-2">There are no animals to show.</p>
         {% endif %}
     </div>
+
+    {% include 'bottomhero.html.twig' %}
 {% endblock %}

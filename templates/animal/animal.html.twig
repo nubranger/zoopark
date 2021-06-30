@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ animal.name }}{% endblock %}
+
+{% block body %}
+
+    <div class="container" style="margin-top: 250px; margin-bottom: 200px">
+        <h1>{{ animal.name }}</h1>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="d-flex justify-content-center p-3">
+                    {% if animal.image %}
+                        <img class="img-fluid" src="{{ animal.imagePath }}" alt="{{ animal.image }}">
+                    {% else %}
+                        <img class="img-fluid" src="{{ asset('./build/images/noimage.jpg') }}" alt="noimage">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="p-3">
+                    <h4>{{ animal.name }}</h4>
+                    <h6>Birth year: {{ animal.birthYear.format("Y") }}</h6>
+                    <h6>Species: {{ animal.species.name }}</h6>
+                    <div><h6>About:</h6>{{ animal.animalBook }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

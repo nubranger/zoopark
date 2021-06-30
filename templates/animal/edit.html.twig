@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Book{% endblock %}
+
+{% block body %}
+
+    <div class="container mb-5" style="margin-top: 250px">
+        <h1>Edit Animal</h1>
+        <form action="{{ path('animal_update', {id:animal.id}) }}" method="POST" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Image</h6>
+                    <input type="file" name="image">
+                    <hr>
+
+                    <label for="animal_name" class="form-label">Name</label>
+                    <input class="form-control" type="text" name="animal_name" id="animal_name"
+                           value="{{ animal.name }}">
+                    <label for="animal_birthyear" class="form-label">Birth year</label>
+                    <input class="form-control" type="date" name="animal_birthyear" id="animal_birthyear"
+                           value="{{ animal.birthYear|date("Y-m-d") }}">
+                    <label for="animal_book" class="form-label">Animal book</label>
+                    <div class="form-floating">
+                        <textarea class="form-control" placeholder="Leave a comment here" name="animal_book"
+                                  id="floatingTextarea">{{ animal.animalBook }}</textarea>
+                        <label for="floatingTextarea">Comments</label>
+                    </div>
+                    <label for="animal_manager" class="form-label">Specialist</label>
+                    <select name="animal_manager_id" id="animal_manager" class="form-select">
+                        {% for manager in managers %}
+                            <option value="{{ manager.id }}" {% if manager.id == animal.manager.id %} selected {% endif %}>
+                                {{ manager.name }} {{ manager.surname }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <label for="animal_species" class="form-label">Species</label>
+                    <select name="animal_species_id" id="animal_species" class="form-select">
+                        {% for specie in species %}
+                            <option value="{{ specie.id }}" {% if specie.id == animal.species.id %} selected {% endif %}>
+                                {{ specie.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6 mt-2">
+                    {% include 'validations/validation.html.twig' %}
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-12">
+                    <div class="btn-group" role="group">
+                        <button type="submit" class="btn btn-outline-success me-2">Save</button>
+                        <a class="btn btn-outline-secondary me-2" href="{{ path('animal_index') }}">Back</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
