@@ -3,6 +3,8 @@
 {% block title %}Animals{% endblock %}
 
 {% block body %}
+
+
     <div class="position-relative overflow-hidden p-3 p-md-5 text-center bg-light hero"
          style="background-image: linear-gradient(to right bottom, #00b42f8f, #ffeb0059), url({{ asset('build/images/hero/hero1.jpg') }});"
     >
@@ -16,6 +18,13 @@
     </div>
 
     <div class="container mt-5 mb-5">
+        <div class="d-flex align-items-center mb-2">
+            <a href="{{ path('animal_create') }}" type="button" class="btn btn-outline-secondary me-2">
+                Add animal
+            </a>
+            {% include 'validations/validation.html.twig' %}
+        </div>
+
         <div class="row row-cols-1 row-cols-md-4 g-4">
             {% for animal in animals %}
                 <div class="col">
@@ -27,7 +36,8 @@
                         {% endif %}
                         <div class="card-body">
                             <h5 class="card-title">
-                                <a class="text-success" style="text-decoration: none" href="{{ path('animal_view', {id:animal.id}) }}">{{ animal.name }}</a>
+                                <a class="text-success" style="text-decoration: none"
+                                   href="{{ path('animal_view', {id:animal.id}) }}">{{ animal.name }}</a>
                             </h5>
                             <p class="card-text">Birth year: {{ animal.birthYear.format("Y") }}</p>
                             <p class="card-text">Species:
@@ -39,11 +49,12 @@
                                                                             style="text-decoration: none">{{ animal.manager.name }} {{ animal.manager.surname }}</a>
                             </p>
                         </div>
-                        <div class="btn-group" role="group">
+                        <div class="d-flex align-items-center m-1">
                             <a href="{{ path('animal_edit', {id:animal.id}) }}" type="button"
-                               class="btn btn-outline-secondary">Edit</a>
-                            <a href="{{ path('animal_delete', {id:animal.id}) }}" type="button"
-                               class="btn btn-outline-danger">Delete</a>
+                               class="btn btn-outline-secondary m-1">Edit</a>
+                            <form action="{{ path('animal_delete', {id:animal.id}) }}" method="POST">
+                                <button type="submit" class="btn btn-outline-danger">Delete</button>
+                            </form>
                         </div>
                     </div>
                 </div>

@@ -20,7 +20,7 @@ class AnimalController extends AbstractController
     /**
      * @Route("/", name="animal_index")
      */
-    public function index(): Response
+    public function animalIndex(): Response
     {
         $animals = $this->getDoctrine()
             ->getRepository(Animal::class)
@@ -28,6 +28,26 @@ class AnimalController extends AbstractController
 
         return $this->render('animal/index.html.twig', [
             'animals' => $animals,
+        ]);
+    }
+
+    /**
+     * @Route("/animal/create", name="animal_create", methods={"GET"})
+     */
+    public function animalCreate(): Response
+    {
+        $managers = $this->getDoctrine()
+            ->getRepository(Manager::class)
+            ->findAll();
+
+        $species = $this->getDoctrine()
+            ->getRepository(Species::class)
+            ->findAll();
+
+        return $this->render('animal/create.html.twig', [
+            'managers' => $managers,
+            'species' => $species,
+//            'errors' => $r->getSession()->getFlashBag()->get('errors', [])
         ]);
     }
 
@@ -45,10 +65,77 @@ class AnimalController extends AbstractController
         ]);
     }
 
+
+    /**
+     * @Route("/animal/store", name="animal_store", methods={"POST"})
+     */
+    public function animalStore(Request $r, ValidatorInterface $validator, UploaderHelper $uploaderHelper): Response
+    {
+        $manager = $this->getDoctrine()
+            ->getRepository(Manager::class)
+            ->find($r->request->get('animal_manager_id'));
+
+        $species = $this->getDoctrine()
+            ->getRepository(Species::class)
+            ->find($r->request->get('animal_species_id'));
+
+        $animal = new Animal();
+
+        $uploadedFile = $r->files->get('image');
+        if ($uploadedFile) {
+
+            $violations = $validator->validate(
+                $uploadedFile,
+                new File([
+                    'maxSize' => '1M',
+                    'mimeTypes' => [
+                        'image/jpg',
+                        'image/jpeg'
+//                        'image/*'
+                    ]
+                ])
+            );
+
+            if ($violations->count() > 0) {
+                $violation = $violations[0];
+//                $r->getSession()->getFlashBag()->add('errors', $violation->getMessage());
+                $this->addFlash('errors', $violation->getMessage());
+                return $this->redirectToRoute('animal_create');
+            }
+            $newFilename = $uploaderHelper->uploadBookImage($uploadedFile);
+            $animal->setImage($newFilename);
+        }
+
+        $date = new DateTime($r->request->get('animal_birthyear'));
+        $animal
+            ->setName($r->request->get('animal_name'))
+            ->setBirthYear($date)
+            ->setAnimalBook($r->request->get('animal_book'))
+            ->setSpecies($species)
+            ->setManager($manager);
+
+        $errors = $validator->validate($animal);
+        if (count($errors) > 0) {
+            foreach ($errors as $error) {
+//                $r->getSession()->getFlashBag()->add('errors', $error->getMessage());
+                $this->addFlash('errors', $error->getMessage());
+            }
+            return $this->redirectToRoute('animal_create');
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($animal);
+        $entityManager->flush();
+
+        $this->addFlash('success', "Animal {$animal->getName()} was added.");
+
+        return $this->redirectToRoute('animal_index');
+    }
+
     /**
      * @Route("/animal/edit/{id}", name="animal_edit", methods={"GET"})
      */
-    public function edit(Request $r, $id): Response
+    public function animalEdit($id): Response
     {
         $managers = $this->getDoctrine()
             ->getRepository(Manager::class)
@@ -73,7 +160,7 @@ class AnimalController extends AbstractController
     /**
      * @Route("/animal/update/{id}", name="animal_update", methods={"POST"})
      */
-    public function update(Request $r, ValidatorInterface $validator, $id, UploaderHelper $uploaderHelper): Response
+    public function animalUpdate(Request $r, ValidatorInterface $validator, $id, UploaderHelper $uploaderHelper): Response
     {
         $manager = $this->getDoctrine()
             ->getRepository(Manager::class)
@@ -133,22 +220,25 @@ class AnimalController extends AbstractController
         $entityManager->persist($animal);
         $entityManager->flush();
 
+        $this->addFlash('success', "Animal {$animal->getName()} was edited.");
+
         return $this->redirectToRoute('animal_index');
     }
 
     /**
      * @Route("/animal/delete/{id}", name="animal_delete", methods={"POST"})
      */
-    public
-    function delete(Request $r, $id): Response
+    public function animalDelete($id): Response
     {
-        $book = $this->getDoctrine()
+        $animal = $this->getDoctrine()
             ->getRepository(Animal::class)
             ->find($id);
 
         $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($book);
+        $entityManager->remove($animal);
         $entityManager->flush();
+
+        $this->addFlash('danger', "Animal {$animal->getName()} was deleted.");
 
         return $this->redirectToRoute('animal_index');
     }
