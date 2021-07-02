@@ -6,6 +6,7 @@ use App\Repository\ManagerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=ManagerRepository::class)
@@ -21,11 +22,25 @@ class Manager
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Name should not be blank.")
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 255,
+     *      minMessage = "Name must be at least {{ limit }} characters long.",
+     *      maxMessage = "Name cannot be longer than {{ limit }} characters."
+     * )
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Surname should not be blank.")
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 255,
+     *      minMessage = "Surname must be at least {{ limit }} characters long.",
+     *      maxMessage = "Surname cannot be longer than {{ limit }} characters."
+     * )
      */
     private $surname;
 
@@ -147,5 +162,10 @@ class Manager
         $this->image = $image;
 
         return $this;
+    }
+
+    public function getImagePath(): ?string
+    {
+        return '/uploads/manager_images/' . $this->getImage();
     }
 }

@@ -14,20 +14,75 @@
     <div class="container mt-5">
         <h1 class="text-white">Our specialists</h1>
     </div>
+
     <div class="container mt-5 mb-5">
-        <div class="row row-cols-1 row-cols-md-4 g-2">
+        <div class="d-flex align-items-center mb-2">
+            <a href="{{ path('manager_create') }}" type="button" class="btn btn-outline-secondary me-2">
+                Add specialist
+            </a>
+            {% include 'validations/validation.html.twig' %}
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-4">
             {% for manager in managers %}
-                <div class="col">
+                <div class="col mb-2">
                     <div class="card h-100">
-                        <img src="{{ asset('build/images/managers/' ~ manager.image) }}" class="card-img-top p-3"
-                             alt="{{ manager.name }}">
+                        {% if manager.image %}
+                            <img src="{{ manager.imagePath }}" alt="{{ manager.name }}" class="card-img-top p-3">
+                        {% else %}
+                            <img src="{{ asset('build/images/noimage.jpg') }}" alt="noimage" class="card-img-top p-3">
+                        {% endif %}
+
                         <div class="card-body">
-                            <h5 class="card-title">{{ manager.name }} {{ manager.surname }}</h5>
+                            <h5 class="card-title">
+                                <a class="text-success" style="text-decoration: none"
+                                   href="{{ path('manager_view', {id:manager.id}) }}">{{ manager.name }} {{ manager.surname }}</a>
+                            </h5>
                             <p class="card-text">Specialty: {{ manager.species.name }}</p>
+                        </div>
+                        <div class="d-flex align-items-center m-1">
+                            <a href="{{ path('manager_edit', {id:manager.id}) }}" type="button"
+                               class="btn btn-outline-secondary m-1">Edit</a>
+                            <a type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
+                               data-bs-target="{{ '#manager' ~ manager.id }}">
+                                Delete
+                            </a>
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="{{ 'manager' ~ manager.id }}" data-bs-backdrop="static"
+                             data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteModal">Delete</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to delete {{ manager.name }} {{ manager.surname }}?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close
+                                        </button>
+                                        <form action="{{ path('manager_delete', {id:manager.id}) }}" method="POST">
+                                            <button type="submit" class="btn btn-outline-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             {% endfor %}
         </div>
+        <div class="mt-4">
+            {% if managers is empty %}
+                <h5>There are no specialists to show.</h5>
+            {% endif %}
+        </div>
     </div>
+
+    {% include 'bottomhero.html.twig' %}
 {% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create Specialist{% endblock %}
+
+{% block body %}
+
+    <div class="container mb-5" style="margin-top: 250px">
+        <h1>Create Specialist</h1>
+        <form action="{{ path('manager_store') }}" method="POST" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Image</h6>
+                    <input type="file" name="image">
+                    <hr>
+
+                    <label for="manager_name" class="form-label">Name</label>
+                    <input class="form-control" type="text" name="manager_name" id="manager_name">
+                    <label for="manager_surname" class="form-label">Surname</label>
+                    <input class="form-control" type="text" name="manager_surname" id="manager_surname">
+                    <label for="floatingTextarea" class="form-label">About</label>
+                    <div class="form-floating">
+                        <textarea class="form-control" name="manager_about" id="floatingTextarea"></textarea>
+                    </div>
+                    <label for="manager_species" class="form-label">Species</label>
+                    <select name="manager_species_id" id="manager_species" class="form-select">
+                        {% for specie in species %}
+                            <option value="{{ specie.id }}">
+                                {{ specie.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6 mt-2">
+                    {% include 'validations/validation.html.twig' %}
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-12">
+                    <div class="btn-group" role="group">
+                        <button type="submit" class="btn btn-outline-success me-2">Add</button>
+                        <a class="btn btn-outline-secondary me-2" href="{{ path('animal_index') }}">Back</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

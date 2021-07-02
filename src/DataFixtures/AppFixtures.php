@@ -16,13 +16,13 @@ class AppFixtures extends Fixture
 
         $species = new Species();
         $species->setName("Mammals");
-        $species->setImage("mammals.jpg");
         $species->setAbout("Mammals include humans and all other animals that are warm-blooded vertebrates (vertebrates have backbones) with hair. They feed their young with milk and have a more well-developed brain than other types of animals.");
         $manager->persist($species);
 
         $specialist = new Manager();
         $specialist->setName("John");
         $specialist->setSurname("Smith");
+        $specialist->setAbout("A zookeeper is someone who works in a zoo. More specifically, it is someone who cares for animals in the zoo. They are responsible for the feeding and daily care of the animals. They clean out the exhibitions and report health problems. They answer questions about the animals. They sometimes give a demonstration of how to care for or feed the animals.");
         $specialist->setSpecies($species);
         $manager->persist($specialist);
 
@@ -57,13 +57,13 @@ class AppFixtures extends Fixture
 
         $species = new Species();
         $species->setName("Birds");
-        $species->setImage("birds.jpg");
         $species->setAbout("Birds are warm-blooded vertebrates (vertebrates have backbones) and are the only animals with feathers. Although all birds have wings, a few species can't fly.");
         $manager->persist($species);
 
         $specialist = new Manager();
         $specialist->setName("Marry");
         $specialist->setSurname("Jane");
+        $specialist->setAbout("A zookeeper is someone who works in a zoo. More specifically, it is someone who cares for animals in the zoo. They are responsible for the feeding and daily care of the animals. They clean out the exhibitions and report health problems. They answer questions about the animals. They sometimes give a demonstration of how to care for or feed the animals.");
         $specialist->setSpecies($species);
         $manager->persist($specialist);
 
@@ -98,13 +98,13 @@ class AppFixtures extends Fixture
 
         $species = new Species();
         $species->setName("Reptiles");
-        $species->setImage("reptiles.jpg");
         $species->setAbout("Reptiles are cold-blooded vertebrates. (Vertebrates have backbones.) They have dry skin covered with scales or bony plates and usually lay soft-shelled eggs.");
         $manager->persist($species);
 
         $specialist = new Manager();
         $specialist->setName("Steve");
         $specialist->setSurname("Ho");
+        $specialist->setAbout("A zookeeper is someone who works in a zoo. More specifically, it is someone who cares for animals in the zoo. They are responsible for the feeding and daily care of the animals. They clean out the exhibitions and report health problems. They answer questions about the animals. They sometimes give a demonstration of how to care for or feed the animals.");
         $specialist->setSpecies($species);
         $manager->persist($specialist);
 
@@ -139,13 +139,13 @@ class AppFixtures extends Fixture
 
         $species = new Species();
         $species->setName("Fishes");
-        $species->setImage("fishes.jpg");
         $species->setAbout("Fish are vertebrates (vertebrates have backbones) that live in water. They breathe using special organs called gills.");
         $manager->persist($species);
 
         $specialist = new Manager();
         $specialist->setName("Sara");
         $specialist->setSurname("Dow");
+        $specialist->setAbout("A zookeeper is someone who works in a zoo. More specifically, it is someone who cares for animals in the zoo. They are responsible for the feeding and daily care of the animals. They clean out the exhibitions and report health problems. They answer questions about the animals. They sometimes give a demonstration of how to care for or feed the animals.");
         $specialist->setSpecies($species);
         $manager->persist($specialist);
 

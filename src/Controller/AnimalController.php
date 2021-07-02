@@ -7,7 +7,6 @@ use App\Entity\Manager;
 use App\Entity\Species;
 use App\Service\UploaderHelper;
 use DateTime;
-use Symfony\Bridge\Twig\AppVariable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -102,7 +101,7 @@ class AnimalController extends AbstractController
                 $this->addFlash('errors', $violation->getMessage());
                 return $this->redirectToRoute('animal_create');
             }
-            $newFilename = $uploaderHelper->uploadBookImage($uploadedFile);
+            $newFilename = $uploaderHelper->uploadImage($uploadedFile, "/animal_images");
             $animal->setImage($newFilename);
         }
 
@@ -195,7 +194,7 @@ class AnimalController extends AbstractController
                 $this->addFlash('errors', $violation->getMessage());
                 return $this->redirectToRoute('animal_edit', ['id' => $animal . $id]);
             }
-            $newFilename = $uploaderHelper->uploadBookImage($uploadedFile);
+            $newFilename = $uploaderHelper->uploadImage($uploadedFile, "/animal_images");
             $animal->setImage($newFilename);
         }
 

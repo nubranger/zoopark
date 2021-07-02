@@ -18,9 +18,9 @@ class UploaderHelper
         $this->uploadsPath = $uploadsPath;
     }
 
-    public function uploadBookImage(UploadedFile $uploadedFile): string
+    public function uploadImage(UploadedFile $uploadedFile, string $path): string
     {
-        $destination = $this->uploadsPath . '/animal_images';
+        $destination = $this->uploadsPath . $path;
 
         $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
         $newFilename = Urlizer::urlize($originalFilename) . '-' . uniqid('', true) . '.' . $uploadedFile->guessExtension();
