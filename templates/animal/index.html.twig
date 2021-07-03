@@ -24,6 +24,38 @@
             </a>
             {% include 'validations/validation.html.twig' %}
         </div>
+        <div class="d-flex justify-content-center">
+            <div class="p-2">
+                <form action="{{ path('animal_index') }}" method="GET">
+                    <div class="input-group">
+                        <span class="input-group-text" id="animal_sort">List order by</span>
+                        <select class="form-select" id="animal_sort" name="sort">
+                            <option value="default">Default</option>
+                            <option value="name_az" {% if sortBy == 'name_az' %} selected {% endif %}>Name a-z</option>
+                            <option value="name_za" {% if sortBy == 'name_za' %} selected {% endif %}>Name z-a</option>
+                            <option value="year_lh" {% if sortBy == 'year_lh' %} selected {% endif %}>Year - Low to High</option>
+                            <option value="year_hl" {% if sortBy == 'year_hl' %} selected {% endif %}>Year - High to Low</option>
+                        </select>
+                        <button class="btn btn-outline-secondary" type="submit">Sort</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="p-2">
+                <form action="{{ path('animal_index') }}" method="GET">
+                    <div class="input-group">
+                        <span class="input-group-text" id="animal_filter">Filter list by</span>
+                        <select name="species_id" id="animal_filter" name="filter">
+                            <option value="0">View all</option>
+                            {% for specie in species %}
+                                <option value="{{ specie.id }}" {% if specieId == specie.id %} selected {% endif %}>{{ specie.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn btn-outline-secondary" type="submit">Filter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
         <div class="row row-cols-1 row-cols-md-4">
             {% for animal in animals %}
@@ -41,13 +73,13 @@
                             </h5>
                             <p class="card-text">Birth year: {{ animal.birthYear.format("Y") }}</p>
                             <p class="card-text">Species:
-{#                                <a class="text-success" style="text-decoration: none" href="{{ path('species_animals', {id:animal.species.id}) }}">#}
-                                    {{ animal.species.name }}
-{#                                </a>#}
+                                <a class="text-success" style="text-decoration: none" href="{{ path('species_animals', {id:animal.species.id}) }}">
+                                    {{ animal.species.name|lower }}
+                                </a>
                             </p>
                             <p class="card-text">
-                                Specialist of {{ animal.species.name }}: <a class="text-success" href="#"
-                                                                            style="text-decoration: none">{{ animal.manager.name }} {{ animal.manager.surname }}</a>
+                                Specialist of {{ animal.species.name|lower }}:
+                                <a class="text-success" href="{{ path('manager_view', {id:animal.manager.id}) }}" style="text-decoration: none">{{ animal.manager.name }} {{ animal.manager.surname }}</a>
                             </p>
                         </div>
                         <div class="d-flex align-items-center m-1">

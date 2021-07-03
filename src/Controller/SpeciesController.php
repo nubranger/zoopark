@@ -38,22 +38,22 @@ class SpeciesController extends AbstractController
         ]);
     }
 
-//    /**
-//     * @Route("/species/{id}", name="species_animals")
-//     */
-//    public function speciesView($id): Response
-//    {
-//        $species = $this->getDoctrine()
-//            ->getRepository(Species::class)
-//            ->find($id);
-//
-//        $animals = $species->getAnimals();
-//
-//        return $this->render('species/animals.html.twig', [
-//            'animals' => $animals,
-//            'species' => $species
-//        ]);
-//    }
+    /**
+     * @Route("/species/{id}", name="species_animals")
+     */
+    public function speciesView($id): Response
+    {
+        $species = $this->getDoctrine()
+            ->getRepository(Species::class)
+            ->find($id);
+
+        $animals = $species->getAnimals();
+
+        return $this->render('species/animals.html.twig', [
+            'animals' => $animals,
+            'species' => $species
+        ]);
+    }
 
     /**
      * @Route("/species/store", name="species_store", methods={"POST"})

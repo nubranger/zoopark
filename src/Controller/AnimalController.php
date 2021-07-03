@@ -19,14 +19,40 @@ class AnimalController extends AbstractController
     /**
      * @Route("/", name="animal_index")
      */
-    public function animalIndex(): Response
+    public function animalIndex(Request $r): Response
     {
-        $animals = $this->getDoctrine()
-            ->getRepository(Animal::class)
+        $species = $this->getDoctrine()
+            ->getRepository(Species::class)
             ->findAll();
+
+        $animals = $this->getDoctrine()
+            ->getRepository(Animal::class);
+
+        if ($r->query->get('sort') === 'name_az') {
+            $animals = $animals->findBy([], ['name' => 'asc']);
+        } elseif ($r->query->get('sort') === 'name_za') {
+            $animals = $animals->findBy([], ['name' => 'desc']);
+        } elseif ($r->query->get('sort') === 'year_lh') {
+            $animals = $animals->findBy([], ['birth_year' => 'asc']);
+        } elseif ($r->query->get('sort') === 'year_hl') {
+            $animals = $animals->findBy([], ['birth_year' => 'desc']);
+        } elseif ($r->query->get('species_id') !== null && $r->query->get('species_id') != 0) {
+            $specie = $this->getDoctrine()->
+            getRepository(Species::class)->
+            find($r->query->get('species_id'));
+            $animals = $specie->getAnimals();
+        } elseif ($r->query->get('species_id') === 0) {
+            $animals = $animals->findAll();
+        } else {
+            $animals = $animals->findAll();
+        }
+
 
         return $this->render('animal/index.html.twig', [
             'animals' => $animals,
+            'species' => $species,
+            'specieId' => $r->query->get('species_id') ?? 0,
+            'sortBy' => $r->query->get('sort') ?? 'default',
         ]);
     }
 

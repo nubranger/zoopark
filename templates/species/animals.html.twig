@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Animal Species{% endblock %}
+{% block title %}{{ species.name }}{% endblock %}
 
 {% block body %}
     <div class="position-relative overflow-hidden p-3 p-md-5 text-center bg-light hero"
@@ -26,11 +26,17 @@
                             <img src="{{ asset('build/images/noimage.jpg') }}" alt="noimage" class="card-img-top">
                         {% endif %}
                         <div class="card-body">
-                            <h5 class="card-title">{{ animal.name }}</h5>
+                            <h5 class="card-title">
+                                <a class="text-success" href="{{ path('animal_view', {id:animal.id}) }}" style="text-decoration: none">
+                                {{ animal.name }}
+                                </a>
+                            </h5>
                             <p class="card-text">Birth year: {{ animal.birthYear.format("Y") }}</p>
                             <p class="card-text">Species: {{ animal.species.name }}</p>
-                            <p class="card-text">Specialist of {{ animal.species.name }}
-                                : {{ animal.manager.name }} {{ animal.manager.surname }}
+                            <p class="card-text">Specialist of{{ animal.species.name }}:
+                                <a class="text-success" href="{{ path('manager_view', {id:animal.manager.id}) }}" style="text-decoration: none">
+                                {{ animal.manager.name }} {{ animal.manager.surname }}
+                                </a>
                             </p>
                         </div>
                     </div>
