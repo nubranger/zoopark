@@ -96,7 +96,7 @@
                         <div class="modal fade" id="{{ 'animal' ~ animal.id }}" data-bs-backdrop="static"
                              data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
                              aria-hidden="true">
-                            <div class="modal-dialog">
+                            <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="deleteModal">Delete</h5>
@@ -107,7 +107,7 @@
                                         Are you sure you want to delete {{ animal.name }}?
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close
                                         </button>
                                         <form action="{{ path('animal_delete', {id:animal.id}) }}" method="POST">
                                             <button type="submit" class="btn btn-outline-danger">Delete</button>

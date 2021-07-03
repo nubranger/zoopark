@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -19,7 +20,7 @@ class AnimalController extends AbstractController
     /**
      * @Route("/", name="animal_index")
      */
-    public function animalIndex(Request $r): Response
+    public function animalIndex(Request $r, AuthenticationUtils $authenticationUtils): Response
     {
         $species = $this->getDoctrine()
             ->getRepository(Species::class)
@@ -47,12 +48,16 @@ class AnimalController extends AbstractController
             $animals = $animals->findAll();
         }
 
+        // get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+        // last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('animal/index.html.twig', [
             'animals' => $animals,
             'species' => $species,
             'specieId' => $r->query->get('species_id') ?? 0,
-            'sortBy' => $r->query->get('sort') ?? 'default',
+            'sortBy' => $r->query->get('sort') ?? 'default'
         ]);
     }
 

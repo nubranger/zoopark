@@ -32,8 +32,57 @@
             </ul>
 
             <div class="col-md-3 text-end">
-                <button type="button" class="btn btn-outline-success me-2">Login</button>
+                {% if app.user %}
+                    <div class="input-group justify-content-end">
+                        <div class="input-group-text" id="btnGroupAddon">{{ app.user.username }}</div>
+                        <a href="{{ path('app_logout') }}" type="button" class="btn btn-outline-success">Logout</a>
+                    </div>
+                {% else %}
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal1" class="btn btn-outline-success me-2">Login</button>
+                {% endif %}
             </div>
+
+
+            <!-- Modal -->
+            <div data-bs-backdrop="false" class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Please sign in</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{ path('app_login') }}" method="POST">
+                                <div class="form-floating mb-1">
+                                    <input value="{{ app.request.get('last_username') }}" autocomplete="username" name="username" type="text" class="form-control" id="floatingInput" placeholder="Username" required>
+                                    <label for="floatingInput">Username</label>
+                                </div>
+                                <div class="form-floating  mb-3">
+                                    <input name="password" type="password" class="form-control" id="floatingPassword" placeholder="Password" required>
+                                    <label for="floatingPassword">Password</label>
+                                </div>
+
+{#                                <div class="checkbox mb-3">#}
+{#                                    <label>#}
+{#                                        <input type="checkbox" name="_remember_me"> Remember me#}
+{#                                    </label>#}
+{#                                </div>#}
+                                <input type="hidden" name="_csrf_token"
+                                       value="{{ csrf_token('authenticate') }}"
+                                >
+                                <button class="w-100 btn btn-lg btn-success" type="submit">Sign in</button>
+                            </form>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
         </header>
     </div>
 </nav>
