@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Animal;
 use App\Entity\Species;
 use App\Service\UploaderHelper;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,6 +31,7 @@ class SpeciesController extends AbstractController
 
     /**
      * @Route("/species/create", name="species_create", methods={"GET"})
+     * @IsGranted("ROLE_ADMIN")
      */
     public function speciesCreate(): Response
     {
@@ -39,27 +41,16 @@ class SpeciesController extends AbstractController
     }
 
     /**
-     * @Route("/species/{id}", name="species_animals")
-     */
-    public function speciesView($id): Response
-    {
-        $species = $this->getDoctrine()
-            ->getRepository(Species::class)
-            ->find($id);
-
-        $animals = $species->getAnimals();
-
-        return $this->render('species/animals.html.twig', [
-            'animals' => $animals,
-            'species' => $species
-        ]);
-    }
-
-    /**
      * @Route("/species/store", name="species_store", methods={"POST"})
+     * @IsGranted("ROLE_ADMIN")
      */
     public function speciesStore(Request $r, ValidatorInterface $validator, UploaderHelper $uploaderHelper): Response
     {
+        $submittedToken = $r->request->get('token');
+        if (!$this->isCsrfTokenValid('', $submittedToken)) {
+            $this->addFlash('errors', 'Invalid token.');
+        }
+
         $species = new Species();
 
         $uploadedFile = $r->files->get('image');
@@ -98,6 +89,10 @@ class SpeciesController extends AbstractController
             return $this->redirectToRoute('species_create');
         }
 
+        if (!$this->isCsrfTokenValid('', $submittedToken)) {
+            return $this->redirectToRoute('species_create');
+        }
+
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($species);
         $entityManager->flush();
@@ -109,6 +104,7 @@ class SpeciesController extends AbstractController
 
     /**
      * @Route("/species/edit/{id}", name="species_edit", methods={"GET"})
+     * @IsGranted("ROLE_ADMIN")
      */
     public function speciesEdit($id): Response
     {
@@ -123,9 +119,15 @@ class SpeciesController extends AbstractController
 
     /**
      * @Route("/species/update/{id}", name="species_update", methods={"POST"})
+     * @IsGranted("ROLE_ADMIN")
      */
     public function speciesUpdate(Request $r, ValidatorInterface $validator, $id, UploaderHelper $uploaderHelper): Response
     {
+        $submittedToken = $r->request->get('token');
+        if (!$this->isCsrfTokenValid('', $submittedToken)) {
+            $this->addFlash('errors', 'Invalid token.');
+        }
+
         $species = $this->getDoctrine()
             ->getRepository(Species::class)
             ->find($id);
@@ -166,6 +168,10 @@ class SpeciesController extends AbstractController
             return $this->redirectToRoute('species_edit', ['id' => $id]);
         }
 
+        if (!$this->isCsrfTokenValid('', $submittedToken)) {
+            return $this->redirectToRoute('species_edit', ['id' => $id]);
+        }
+
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($species);
         $entityManager->flush();
@@ -177,6 +183,7 @@ class SpeciesController extends AbstractController
 
     /**
      * @Route("/species/delete/{id}", name="species_delete", methods={"POST"})
+     * @IsGranted("ROLE_ADMIN")
      */
     public function speciesDelete(Request $r, $id): Response
     {
@@ -191,5 +198,22 @@ class SpeciesController extends AbstractController
         $this->addFlash('danger', "Species {$manager->getName()} was deleted.");
 
         return $this->redirectToRoute('species_index');
+    }
+
+    /**
+     * @Route("/species/animals/{id}", name="species_animals")
+     */
+    public function speciesView($id): Response
+    {
+        $species = $this->getDoctrine()
+            ->getRepository(Species::class)
+            ->find($id);
+
+        $animals = $species->getAnimals();
+
+        return $this->render('species/animals.html.twig', [
+            'animals' => $animals,
+            'species' => $species
+        ]);
     }
 }

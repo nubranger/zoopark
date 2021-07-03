@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Manager;
 use App\Entity\Species;
 use App\Service\UploaderHelper;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,6 +31,7 @@ class ManagerController extends AbstractController
 
     /**
      * @Route("/manager/create", name="manager_create", methods={"GET"})
+     * @IsGranted("ROLE_ADMIN")
      */
     public function managerCreate(): Response
     {
@@ -43,24 +45,16 @@ class ManagerController extends AbstractController
     }
 
     /**
-     * @Route("/manager/{id}", name="manager_view", methods={"GET"})
-     */
-    public function managerView($id): Response
-    {
-        $manager = $this->getDoctrine()
-            ->getRepository(Manager::class)
-            ->find($id);
-
-        return $this->render('manager/manager.html.twig', [
-            'manager' => $manager,
-        ]);
-    }
-
-    /**
      * @Route("/manager/store", name="manager_store", methods={"POST"})
+     * @IsGranted("ROLE_ADMIN")
      */
     public function managerStore(Request $r, ValidatorInterface $validator, UploaderHelper $uploaderHelper): Response
     {
+        $submittedToken = $r->request->get('token');
+        if (!$this->isCsrfTokenValid('', $submittedToken)) {
+            $this->addFlash('errors', 'Invalid token.');
+        }
+
         $species = $this->getDoctrine()
             ->getRepository(Species::class)
             ->find($r->request->get('manager_species_id'));
@@ -105,6 +99,10 @@ class ManagerController extends AbstractController
             return $this->redirectToRoute('manager_create');
         }
 
+        if (!$this->isCsrfTokenValid('', $submittedToken)) {
+            return $this->redirectToRoute('manager_create');
+        }
+
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($manager);
         $entityManager->flush();
@@ -116,6 +114,7 @@ class ManagerController extends AbstractController
 
     /**
      * @Route("/manager/edit/{id}", name="manager_edit", methods={"GET"})
+     * @IsGranted("ROLE_ADMIN")
      */
     public function managerEdit($id): Response
     {
@@ -135,9 +134,15 @@ class ManagerController extends AbstractController
 
     /**
      * @Route("/manager/update/{id}", name="manager_update", methods={"POST"})
+     * @IsGranted("ROLE_ADMIN")
      */
     public function managerUpdate(Request $r, ValidatorInterface $validator, $id, UploaderHelper $uploaderHelper): Response
     {
+        $submittedToken = $r->request->get('token');
+        if (!$this->isCsrfTokenValid('', $submittedToken)) {
+            $this->addFlash('errors', 'Invalid token.');
+        }
+
         $species = $this->getDoctrine()
             ->getRepository(Species::class)
             ->find($r->request->get('manager_species_id'));
@@ -184,6 +189,10 @@ class ManagerController extends AbstractController
             return $this->redirectToRoute('manager_edit', ['id' => $id]);
         }
 
+        if (!$this->isCsrfTokenValid('', $submittedToken)) {
+            return $this->redirectToRoute('manager_edit', ['id' => $id]);
+        }
+
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($manager);
         $entityManager->flush();
@@ -195,6 +204,7 @@ class ManagerController extends AbstractController
 
     /**
      * @Route("/manager/delete/{id}", name="manager_delete", methods={"POST"})
+     * @IsGranted("ROLE_ADMIN")
      */
     public function managerDelete(Request $r, $id): Response
     {
@@ -214,5 +224,19 @@ class ManagerController extends AbstractController
         $this->addFlash('danger', "Manager {$manager->getName()} {$manager->getSurname()} was deleted.");
 
         return $this->redirectToRoute('manager_index');
+    }
+
+    /**
+     * @Route("/manager/{id}", name="manager_view", methods={"GET"})
+     */
+    public function managerView($id): Response
+    {
+        $manager = $this->getDoctrine()
+            ->getRepository(Manager::class)
+            ->find($id);
+
+        return $this->render('manager/manager.html.twig', [
+            'manager' => $manager,
+        ]);
     }
 }

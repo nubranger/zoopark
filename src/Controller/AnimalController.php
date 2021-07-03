@@ -7,6 +7,7 @@ use App\Entity\Manager;
 use App\Entity\Species;
 use App\Service\UploaderHelper;
 use DateTime;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,11 +49,6 @@ class AnimalController extends AbstractController
             $animals = $animals->findAll();
         }
 
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
-
         return $this->render('animal/index.html.twig', [
             'animals' => $animals,
             'species' => $species,
@@ -63,6 +59,7 @@ class AnimalController extends AbstractController
 
     /**
      * @Route("/animal/create", name="animal_create", methods={"GET"})
+     * @IsGranted("ROLE_ADMIN")
      */
     public function animalCreate(): Response
     {
@@ -98,9 +95,15 @@ class AnimalController extends AbstractController
 
     /**
      * @Route("/animal/store", name="animal_store", methods={"POST"})
+     * @IsGranted("ROLE_ADMIN")
      */
     public function animalStore(Request $r, ValidatorInterface $validator, UploaderHelper $uploaderHelper): Response
     {
+        $submittedToken = $r->request->get('token');
+        if (!$this->isCsrfTokenValid('', $submittedToken)) {
+            $this->addFlash('errors', 'Invalid token.');
+        }
+
         $manager = $this->getDoctrine()
             ->getRepository(Manager::class)
             ->find($r->request->get('animal_manager_id'));
@@ -153,6 +156,10 @@ class AnimalController extends AbstractController
             return $this->redirectToRoute('animal_create');
         }
 
+        if (!$this->isCsrfTokenValid('', $submittedToken)) {
+            return $this->redirectToRoute('animal_create');
+        }
+
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($animal);
         $entityManager->flush();
@@ -164,6 +171,7 @@ class AnimalController extends AbstractController
 
     /**
      * @Route("/animal/edit/{id}", name="animal_edit", methods={"GET"})
+     * @IsGranted("ROLE_ADMIN")
      */
     public function animalEdit($id): Response
     {
@@ -189,9 +197,15 @@ class AnimalController extends AbstractController
 
     /**
      * @Route("/animal/update/{id}", name="animal_update", methods={"POST"})
+     * @IsGranted("ROLE_ADMIN")
      */
     public function animalUpdate(Request $r, ValidatorInterface $validator, $id, UploaderHelper $uploaderHelper): Response
     {
+        $submittedToken = $r->request->get('token');
+        if (!$this->isCsrfTokenValid('', $submittedToken)) {
+            $this->addFlash('errors', 'Invalid token.');
+        }
+
         $manager = $this->getDoctrine()
             ->getRepository(Manager::class)
             ->find($r->request->get('animal_manager_id'));
@@ -246,6 +260,10 @@ class AnimalController extends AbstractController
             return $this->redirectToRoute('animal_edit', ['id' => $id]);
         }
 
+        if (!$this->isCsrfTokenValid('', $submittedToken)) {
+            return $this->redirectToRoute('animal_edit', ['id' => $id]);
+        }
+
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($animal);
         $entityManager->flush();
@@ -257,6 +275,7 @@ class AnimalController extends AbstractController
 
     /**
      * @Route("/animal/delete/{id}", name="animal_delete", methods={"POST"})
+     * @IsGranted("ROLE_ADMIN")
      */
     public function animalDelete($id): Response
     {
