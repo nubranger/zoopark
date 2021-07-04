@@ -4,9 +4,7 @@ namespace App\Service;
 
 use Gedmo\Sluggable\Util\Urlizer;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Constraints\File;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+
 
 class UploaderHelper
 {
@@ -32,5 +30,4 @@ class UploaderHelper
 
         return $newFilename;
     }
-
 }

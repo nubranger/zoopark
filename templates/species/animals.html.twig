@@ -15,7 +15,13 @@
         <h1 class="text-white">{{ species.name }}</h1>
     </div>
 
-    <div class="container mt-5 mb-5">
+    <div class="container mt-3 mb-5">
+        <div class="d-flex align-items-center mb-2">
+            <a href="{{ path('species_index') }}" type="button" class="btn btn-outline-secondary me-2">
+                Back
+            </a>
+        </div>
+
         <div class="row row-cols-1 row-cols-md-3 g-4">
             {% for animal in animals %}
                 <div class="col">
@@ -32,8 +38,8 @@
                                 </a>
                             </h5>
                             <p class="card-text">Birth year: {{ animal.birthYear.format("Y") }}</p>
-                            <p class="card-text">Species: {{ animal.species.name }}</p>
-                            <p class="card-text">Specialist of{{ animal.species.name }}:
+                            <p class="card-text">Species: {{ animal.species.name|lower }}</p>
+                            <p class="card-text">Specialist of {{ animal.species.name|lower }}:
                                 <a class="text-success" href="{{ path('manager_view', {id:animal.manager.id}) }}" style="text-decoration: none">
                                 {{ animal.manager.name }} {{ animal.manager.surname }}
                                 </a>

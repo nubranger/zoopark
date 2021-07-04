@@ -17,7 +17,7 @@
         <h1 class="text-white">Animals in our Zoo</h1>
     </div>
 
-    <div class="container mt-5 mb-5">
+    <div class="container mt-3 mb-5">
         <div class="d-flex align-items-center mb-2">
             {% if is_granted('ROLE_ADMIN') %}
                 <a href="{{ path('animal_create') }}" type="button" class="btn btn-outline-secondary me-2">

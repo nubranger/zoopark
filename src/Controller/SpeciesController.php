@@ -185,17 +185,27 @@ class SpeciesController extends AbstractController
      * @Route("/species/delete/{id}", name="species_delete", methods={"POST"})
      * @IsGranted("ROLE_ADMIN")
      */
-    public function speciesDelete(Request $r, $id): Response
+    public function speciesDelete($id): Response
     {
-        $manager = $this->getDoctrine()
+        $species = $this->getDoctrine()
             ->getRepository(Species::class)
             ->find($id);
 
+        if ($species->getAnimals()->count() > 0) {
+            $this->addFlash('danger', "Can't delete: {$species->getName()} related to {$species->getAnimals()->count()} animals.");
+            return $this->redirectToRoute('species_index');
+        }
+
+        if ($species->getManagers()->count() > 0) {
+            $this->addFlash('danger', "Can't delete: {$species->getName()} related to {$species->getManagers()->count()} specialists.");
+            return $this->redirectToRoute('species_index');
+        }
+
         $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($manager);
+        $entityManager->remove($species);
         $entityManager->flush();
 
-        $this->addFlash('danger', "Species {$manager->getName()} was deleted.");
+        $this->addFlash('danger', "Species {$species->getName()} was deleted.");
 
         return $this->redirectToRoute('species_index');
     }
