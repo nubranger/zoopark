@@ -4,7 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Manager;
 use App\Entity\Species;
-use App\Service\UploaderHelper;
+use App\Service\ImageDeleteService;
+use App\Service\ImageUploadService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,7 +49,7 @@ class ManagerController extends AbstractController
      * @Route("/manager/store", name="manager_store", methods={"POST"})
      * @IsGranted("ROLE_ADMIN")
      */
-    public function managerStore(Request $r, ValidatorInterface $validator, UploaderHelper $uploaderHelper): Response
+    public function managerStore(Request $r, ValidatorInterface $validator, ImageUploadService $imageUploadService): Response
     {
         $submittedToken = $r->request->get('token');
         if (!$this->isCsrfTokenValid('', $submittedToken)) {
@@ -81,7 +82,7 @@ class ManagerController extends AbstractController
                 $this->addFlash('errors', $violation->getMessage());
                 return $this->redirectToRoute('manager_create');
             }
-            $newFilename = $uploaderHelper->uploadImage($uploadedFile, "/manager_images");
+            $newFilename = $imageUploadService->uploadImage($uploadedFile, "/manager_images");
             $manager->setImage($newFilename);
         }
 
@@ -136,7 +137,7 @@ class ManagerController extends AbstractController
      * @Route("/manager/update/{id}", name="manager_update", methods={"POST"})
      * @IsGranted("ROLE_ADMIN")
      */
-    public function managerUpdate(Request $r, ValidatorInterface $validator, $id, UploaderHelper $uploaderHelper): Response
+    public function managerUpdate(Request $r, ValidatorInterface $validator, $id, ImageDeleteService $imageDeleteService, ImageUploadService $imageUploadService): Response
     {
         $submittedToken = $r->request->get('token');
         if (!$this->isCsrfTokenValid('', $submittedToken)) {
@@ -171,7 +172,10 @@ class ManagerController extends AbstractController
                 $this->addFlash('errors', $violation->getMessage());
                 return $this->redirectToRoute('manager_edit', ['id' => $manager . $id]);
             }
-            $newFilename = $uploaderHelper->uploadImage($uploadedFile, "/manager_images");
+
+            $imageDeleteService->deleteImage($manager->getImagePath());
+
+            $newFilename = $imageUploadService->uploadImage($uploadedFile, "/manager_images");
             $manager->setImage($newFilename);
         }
 
@@ -206,7 +210,7 @@ class ManagerController extends AbstractController
      * @Route("/manager/delete/{id}", name="manager_delete", methods={"POST"})
      * @IsGranted("ROLE_ADMIN")
      */
-    public function managerDelete(Request $r, $id): Response
+    public function managerDelete($id, ImageDeleteService $imageDeleteService): Response
     {
         $manager = $this->getDoctrine()
             ->getRepository(Manager::class)
@@ -216,6 +220,8 @@ class ManagerController extends AbstractController
             $this->addFlash('danger', "Can't delete: {$manager->getName()} {$manager->getSurname()} related to {$manager->getAnimals()->count()} animals.");
             return $this->redirectToRoute('manager_index');
         }
+
+        $imageDeleteService->deleteImage($manager->getImagePath());
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($manager);

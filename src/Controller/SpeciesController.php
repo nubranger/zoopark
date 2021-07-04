@@ -4,7 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Animal;
 use App\Entity\Species;
-use App\Service\UploaderHelper;
+use App\Service\ImageDeleteService;
+use App\Service\ImageUploadService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,7 +45,7 @@ class SpeciesController extends AbstractController
      * @Route("/species/store", name="species_store", methods={"POST"})
      * @IsGranted("ROLE_ADMIN")
      */
-    public function speciesStore(Request $r, ValidatorInterface $validator, UploaderHelper $uploaderHelper): Response
+    public function speciesStore(Request $r, ValidatorInterface $validator, ImageUploadService $imageUploadService): Response
     {
         $submittedToken = $r->request->get('token');
         if (!$this->isCsrfTokenValid('', $submittedToken)) {
@@ -73,7 +74,7 @@ class SpeciesController extends AbstractController
                 $this->addFlash('errors', $violation->getMessage());
                 return $this->redirectToRoute('species_create');
             }
-            $newFilename = $uploaderHelper->uploadImage($uploadedFile, "/species_images");
+            $newFilename = $imageUploadService->uploadImage($uploadedFile, "/species_images");
             $species->setImage($newFilename);
         }
 
@@ -121,7 +122,7 @@ class SpeciesController extends AbstractController
      * @Route("/species/update/{id}", name="species_update", methods={"POST"})
      * @IsGranted("ROLE_ADMIN")
      */
-    public function speciesUpdate(Request $r, ValidatorInterface $validator, $id, UploaderHelper $uploaderHelper): Response
+    public function speciesUpdate(Request $r, ValidatorInterface $validator, $id, ImageDeleteService $imageDeleteService, ImageUploadService $imageUploadService): Response
     {
         $submittedToken = $r->request->get('token');
         if (!$this->isCsrfTokenValid('', $submittedToken)) {
@@ -152,7 +153,10 @@ class SpeciesController extends AbstractController
                 $this->addFlash('errors', $violation->getMessage());
                 return $this->redirectToRoute('species_edit', ['id' => $species . $id]);
             }
-            $newFilename = $uploaderHelper->uploadImage($uploadedFile, "/species_images");
+
+            $imageDeleteService->deleteImage($species->getImagePath());
+
+            $newFilename = $imageUploadService->uploadImage($uploadedFile, "/species_images");
             $species->setImage($newFilename);
         }
 
@@ -185,7 +189,7 @@ class SpeciesController extends AbstractController
      * @Route("/species/delete/{id}", name="species_delete", methods={"POST"})
      * @IsGranted("ROLE_ADMIN")
      */
-    public function speciesDelete($id): Response
+    public function speciesDelete($id, ImageDeleteService $imageDeleteService): Response
     {
         $species = $this->getDoctrine()
             ->getRepository(Species::class)
@@ -200,6 +204,8 @@ class SpeciesController extends AbstractController
             $this->addFlash('danger', "Can't delete: {$species->getName()} related to {$species->getManagers()->count()} specialists.");
             return $this->redirectToRoute('species_index');
         }
+
+        $imageDeleteService->deleteImage($species->getImagePath());
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($species);

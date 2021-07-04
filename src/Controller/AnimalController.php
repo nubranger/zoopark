@@ -5,16 +5,19 @@ namespace App\Controller;
 use App\Entity\Animal;
 use App\Entity\Manager;
 use App\Entity\Species;
-use App\Service\UploaderHelper;
+use App\Service\ImageDeleteService;
+use App\Service\ImageUploadService;
 use DateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 class AnimalController extends AbstractController
 {
@@ -97,7 +100,7 @@ class AnimalController extends AbstractController
      * @Route("/animal/store", name="animal_store", methods={"POST"})
      * @IsGranted("ROLE_ADMIN")
      */
-    public function animalStore(Request $r, ValidatorInterface $validator, UploaderHelper $uploaderHelper): Response
+    public function animalStore(Request $r, ValidatorInterface $validator, ImageUploadService $imageUploadService): Response
     {
         $submittedToken = $r->request->get('token');
         if (!$this->isCsrfTokenValid('', $submittedToken)) {
@@ -135,7 +138,7 @@ class AnimalController extends AbstractController
                 $this->addFlash('errors', $violation->getMessage());
                 return $this->redirectToRoute('animal_create');
             }
-            $newFilename = $uploaderHelper->uploadImage($uploadedFile, "/animal_images");
+            $newFilename = $imageUploadService->uploadImage($uploadedFile, "/animal_images");
             $animal->setImage($newFilename);
         }
 
@@ -199,7 +202,7 @@ class AnimalController extends AbstractController
      * @Route("/animal/update/{id}", name="animal_update", methods={"POST"})
      * @IsGranted("ROLE_ADMIN")
      */
-    public function animalUpdate(Request $r, ValidatorInterface $validator, $id, UploaderHelper $uploaderHelper): Response
+    public function animalUpdate(Request $r, ValidatorInterface $validator, $id, ImageDeleteService $imageDeleteService, ImageUploadService $imageUploadService): Response
     {
         $submittedToken = $r->request->get('token');
         if (!$this->isCsrfTokenValid('', $submittedToken)) {
@@ -235,11 +238,13 @@ class AnimalController extends AbstractController
 
             if ($violations->count() > 0) {
                 $violation = $violations[0];
-//                $r->getSession()->getFlashBag()->add('errors', $violation->getMessage());
                 $this->addFlash('errors', $violation->getMessage());
                 return $this->redirectToRoute('animal_edit', ['id' => $animal . $id]);
             }
-            $newFilename = $uploaderHelper->uploadImage($uploadedFile, "/animal_images");
+
+            $imageDeleteService->deleteImage($animal->getImagePath());
+
+            $newFilename = $imageUploadService->uploadImage($uploadedFile, "/animal_images");
             $animal->setImage($newFilename);
         }
 
@@ -277,11 +282,13 @@ class AnimalController extends AbstractController
      * @Route("/animal/delete/{id}", name="animal_delete", methods={"POST"})
      * @IsGranted("ROLE_ADMIN")
      */
-    public function animalDelete($id): Response
+    public function animalDelete($id, ImageDeleteService $imageDeleteService): Response
     {
         $animal = $this->getDoctrine()
             ->getRepository(Animal::class)
             ->find($id);
+
+        $imageDeleteService->deleteImage($animal->getImagePath());
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($animal);

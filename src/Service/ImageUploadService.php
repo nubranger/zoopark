@@ -6,10 +6,10 @@ use Gedmo\Sluggable\Util\Urlizer;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 
-class UploaderHelper
+class ImageUploadService
 {
 
-    private $uploadsPath;
+    private string $uploadsPath;
 
     public function __construct(string $uploadsPath)
     {
