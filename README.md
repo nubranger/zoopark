@@ -2,13 +2,11 @@
 BIT.lt task: to create the Zoopark with PHP Symfony framework.  
 This repository is for educational purposes only.
 
-[comment]: <> (## Preview)
+## Preview
+https://user-images.githubusercontent.com/56818312/124400684-0dd10100-dd2d-11eb-82b9-48f9f405ab14.mp4
 
-[comment]: <> (<img width="600" src="https://github.com/nubranger/zoopark/blob/main/assets/images/screenshots/scr1.png?raw=true">  )
 
-[comment]: <> (<img width="600" src="https://github.com/nubranger/zoopark/blob/main/assets/images/screenshots/scr2.png?raw=true">  )
 
-[comment]: <> (<img width="600" src="https://github.com/nubranger/zoopark/blob/main/assets/images/screenshots/scr3.png?raw=true">  )
 
 ### Author
 [Mindaugas Tviraga](https://github.com/nubranger)  
